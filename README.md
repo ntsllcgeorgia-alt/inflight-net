@@ -39,6 +39,51 @@ portal needs to hijack DNS to show you its login page.
 
 ---
 
+## Flying to China (or anywhere behind a national firewall)
+
+**Run it with `-KeepDns` on this route.** One command changes:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\inflight-auto.ps1 -KeepDns
+```
+
+The tuning sets DNS to `1.1.1.1` / `8.8.8.8`. Both are blocked and
+DNS-poisoned inside China. Every other part of the tuning — the window scaling,
+MTU clamp, CTCP, power-save — is pure TCP and works fine there. It's only the
+DNS line that bites, and `-KeepDns` skips exactly that.
+
+If you already ran it without the flag and the internet dies on approach or
+after landing, that's the cause. Fix:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\inflight-off.ps1
+```
+
+Other things that are true on this route and not on a domestic hop:
+
+- **Wi-Fi often cuts out over mainland Chinese airspace.** Several carriers
+  switch the satellite link off there, or route it through a ground gateway
+  where the firewall applies. Nothing you can fix in software. Get your
+  downloading done over the Pacific.
+- **Have your VPN installed and tested before you land.** The app stores and
+  most VPN provider sites are blocked from inside, so it's hard to fix after
+  arrival. Install it at the gate if you haven't.
+- **Roaming works.** Data on international roaming routes back through your home
+  carrier, so it comes out unfiltered. Usually the easiest path for a short trip.
+- **Expect Google, Gmail, WhatsApp, Instagram and most AI chat sites to be
+  unreachable** on local Wi-Fi. WeChat is the thing everyone actually uses.
+
+## A note on the satellite names
+
+The vendor labels (`STARLINK` / `VIASAT` / `ANUVU`) are calibrated against
+Southwest's fleet. On an international carrier you're more likely on Panasonic,
+Gogo 2Ku, or Viasat, so **the name it prints may be wrong.**
+
+That doesn't matter. The tuning keys off the round-trip time, not the vendor —
+the script sorts the link into low-orbit vs geostationary, and that split is
+physics. A 600 ms link needs the same treatment whoever is selling it. Read the
+printed name as "geostationary" or "low orbit" and ignore the brand.
+
 ## What it's actually fixing
 
 The plane's pipe usually isn't the problem. These are, in order:
